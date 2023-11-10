@@ -1,27 +1,5 @@
-// import React from 'react'
-// import './FormStyles.css'
-
-// const Form = () => {
-//   return (
-//     <div className='form'>
-//         <form>
-//             <label>Your Name</label>
-//             <input types='text'></input>
-//             <label>Email</label>
-//             <input types='email'></input>
-//             <label>Subject</label>
-//             <input types='text'></input>
-//             <label>Details</label>
-//             <textarea rows='6' placeholder='Type a short message here' />
-//             <button className='btn'>Submit</button>
-//         </form>
-      
-//     </div>
-//   )
-// }
-
-// export default Form
 import React, { useState } from 'react';
+import { firestore } from './db'; // Import the firestore instance from your firebase.js file
 import './FormStyles.css';
 
 const Form = () => {
@@ -31,28 +9,18 @@ const Form = () => {
     subject: '',
     message: '',
   });
-
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(await firestore.listCollections)
 
     try {
-      const response = await fetch('/api/contact/submit', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
+      // Add the form data to a 'contacts' collection in Firestore
+      await firestore.collection('contact_details').add(formData);
 
-      if (response.ok) {
-        console.log('Form submitted successfully');
-      } else {
-        console.error('Form submission failed');
-      }
+      console.log('Form submitted successfully to Firestore');
     } catch (error) {
       console.error('Form submission error:', error);
     }
@@ -107,5 +75,3 @@ const Form = () => {
 };
 
 export default Form;
-
-
